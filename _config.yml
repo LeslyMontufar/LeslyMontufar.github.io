@@ -11,6 +11,9 @@ urls:
       url: /about
     - text: Blog
       url: /blog
+    - text: My game
+      url: /mygame
+      
     # - text: Galeria
     #   url: /gallery
     # - text: Shop
