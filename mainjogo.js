@@ -1,7 +1,7 @@
-var canvas, ctx, ALTURA, LARGURA, frames=0, maxPulos=3,
+var canvas, ctx, ALTURA, LARGURA, frames=0, maxPulos=3;
 
 chao = {
-    y: 450,
+    y: 550,
     altura: 50,
     cor: "#aa2323",
 
@@ -44,15 +44,15 @@ bloco = {
 
 obstaculos = {
     _obs: [],
-    _cores: ["#ffbc1c", "#ff1c1c", "#ff85e1", "#52a7ff", "#78ff5d"],
+    _cores:["#ffbc1c","#ff1c1c","#ff85e1","#52a7ff","#78ff5d"],
 
     insere: function() {
         this._obs.push({ //adiciona obs
             x:200,
-            largura: 30 + Math.floor(20*Math.random),
-            altura: 30 + Math.floor(100*Math.random),
+            largura: 30 + Math.floor(21*Math.random()),
+            altura: 30 + Math.floor(120*Math.random()),
             cor: this._cores[Math.floor(5*Math.random())]
-        });
+        })
     },
 
     atualiza: function() {
@@ -62,12 +62,12 @@ obstaculos = {
     desenha: function() {
         tam = this._obs.length;
         for (var i = 0; i<tam; i++) { 
-            var obs = this._obs[i]; //cada obs é um objeto
+            var obs = this._obs[i]; 
             ctx.fillStyle = obs.cor;
             ctx.fillRect(obs.x, chao.y-obs.altura, obs.largura, obs.altura);
         }
     }
-}; // até aqui tudo é variavel ou objeto
+}; 
 
 function clique(event) {
     bloco.pula();
@@ -78,8 +78,8 @@ function main() {
     LARGURA=window.innerWidth;
 
     if (LARGURA>=500) { //width:30em
-        LARGURA=500;
-        ALTURA=500;
+        LARGURA=600;
+        ALTURA=600;
     }
 
     canvas = document.createElement("canvas");
