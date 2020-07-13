@@ -11,7 +11,7 @@ urls:
       url: /about
     - text: Blog
       url: /blog
-    - text: My game
+    - text: Game
       url: /mygame
       
     # - text: Galeria
@@ -107,7 +107,7 @@ show_author_project_details: false
 
 # algolia search
 algolia:
-  application_id: D9WA1YKTRQ
+  application_id: D9WA1YKTRQ # acho que nao precisa mudar, é pago, Twitch usa a API
   index_name: blog_posts # You can replace that with whatever name you want
   files_to_exclude: []
   nodes_to_index: 'article'

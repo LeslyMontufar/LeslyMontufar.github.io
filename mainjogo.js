@@ -47,6 +47,10 @@ bloco = {
     reset: function() {
         this.velocidade = 0;
         this.y = 0;
+        if (this.score > record) {
+            localStorage.setItem("record", this.score);
+            record = this.score;
+        }
         this.score = 0;
     },
     desenha: function () {
@@ -130,13 +134,19 @@ function main() {
         ALTURA=600;
     }
 
-    canvas = document.createElement("canvas");
+    // canvas = document.createElement("canvas");
+    // canvas.width=LARGURA;
+    // canvas.height=ALTURA;
+    // canvas.style.border="1px solid #000";
+
+    // ctx = canvas.getContext("2d"); // contexto
+    // document.getElementById("mygame").appendChild(canvas);
+
+    canvas = document.getElementById("canvas");
     canvas.width=LARGURA;
     canvas.height=ALTURA;
     canvas.style.border="1px solid #000";
-
     ctx = canvas.getContext("2d"); // contexto
-    document.getElementById("mygame").appendChild(canvas);
 
     document.addEventListener("mousedown", clique); //mouseover, click, mouseout
     // keydown, keyup, keypress
@@ -180,6 +190,16 @@ function desenha() {
         ctx.save();
         ctx.translate(LARGURA/2, ALTURA/2); //muda a referencia de onde comeca a desenhar
         ctx.fillStyle = "#fff";
+
+        //COLOCANDO O RECORD NO MEIO
+        if (bloco.score > record) //ainda nao mudou record em click():f
+            ctx.fillText("Novo Record!", -150, -65);
+        else if (record <10)
+            ctx.fillText("Record:" + record, -99, -65); //negativo em y vai para cima
+        else if (record<100)
+            ctx.fillText("Record:" + record, -112, -65);
+        else
+            ctx.fillText("Record:" + record, -125, -65); //-112-13(metade de um dígito) para ficar no centro
         if (bloco.score<10)
             ctx.fillText(bloco.score, -13, 12); //um digito tem 26x38 (largura/altura)
         else if (bloco.score<100)
