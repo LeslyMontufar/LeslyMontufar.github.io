@@ -1,5 +1,5 @@
-var canvas, ctx, ALTURA, LARGURA, frames=0, maxPulos=3, velocidade = 6,//vel em x
-estadoAtual,record,
+var canvas, ctx, ALTURA, LARGURA, maxPulos=3, velocidade = 6,//vel em x
+estadoAtual,record,img,
 
 estados = {
     JOGAR:0,
@@ -10,24 +10,40 @@ estados = {
 chao = {
     y: 550,
     altura: 50,
-    cor: "#aa2323",
+    cor: "#6A332E",
 
     desenha: function () {
         ctx.fillStyle = this.cor;
         ctx.fillRect(0, this.y, LARGURA, this.altura);
     }
 },
+
+background = {
+    x:0,
+    largura: bg.largura,
+
+    atualiza: function() {
+        if (estadoAtual == estados.JOGANDO)
+            this.x -= velocidade/60;    
+        if (this.x <LARGURA-bg.largura)
+            this.x = 0;
+    },
+
+    desenha: function() {
+        bg.desenha(this.x, 0);
+    }
+},
 bloco = {
     x:50,
     y:0, //comeca no 0 para fazer o efeito do boquinho caindo
-    altura:50,
-    largura:50,
-    cor:"#ff4e4e",
+    altura: caracter.altura,
+    largura: caracter.largura,
     gravidade: 1.5, //fixo
     velocidade: 0, // velocidade do pulo!
     forcaDoPulo: 24, //na verdade ele pula 15-1.5=13.5 px
     qntPulos: 0,
     score: 0, //para incializar é com ":"
+    tempoMovimenta: 5,
 
     atualiza: function() {
         this.velocidade +=this.gravidade;
@@ -36,6 +52,15 @@ bloco = {
             this.y = chao.y - this.altura; // ele está sempre indo pra baixo...
             this.qntPulos = 0; //...pela gravidade, ele tbm nao pode ocupar o lugar do chao
             this.velocidade = 0;// dois corpos nao ocupam o mesmo lugar no espaço
+        }
+
+        if (estadoAtual == estados.JOGANDO){
+            if(!this.tempoMovimenta) {
+                caracter.movimenta();
+                this.tempoMovimenta = 5;
+            }
+            else
+                this.tempoMovimenta--;
         }
     },
     pula: function() {
@@ -54,8 +79,7 @@ bloco = {
         this.score = 0;
     },
     desenha: function () {
-        ctx.fillStyle = this.cor;
-        ctx.fillRect(this.x, this.y, this.largura, this.altura);
+        caracter.desenha(this.x, this.y);
     }
 },
 
@@ -108,6 +132,8 @@ obstaculos = {
             var obs = this._obs[i]; 
             ctx.fillStyle = obs.cor;
             ctx.fillRect(obs.x, chao.y-obs.altura, obs.largura, obs.altura);
+            // ctx.fillStyle = "black";
+            // ctx.strokeRect(obs.x, chao.y-obs.altura, obs.largura, obs.altura);
         }
     }
 }; 
@@ -134,14 +160,6 @@ function main() {
         ALTURA=600;
     }
 
-    // canvas = document.createElement("canvas");
-    // canvas.width=LARGURA;
-    // canvas.height=ALTURA;
-    // canvas.style.border="1px solid #000";
-
-    // ctx = canvas.getContext("2d"); // contexto
-    // document.getElementById("mygame").appendChild(canvas);
-
     canvas = document.getElementById("canvas");
     canvas.width=LARGURA;
     canvas.height=ALTURA;
@@ -151,10 +169,15 @@ function main() {
     document.addEventListener("mousedown", clique); //mouseover, click, mouseout
     // keydown, keyup, keypress
 
+    estadoAtual = estados.JOGAR;
+
     record = localStorage.getItem("record"); //se encontrar usa, else record=null
     if (record==null)
         record = 0;
-    estadoAtual = estados.JOGAR;
+    
+    img = new Image();
+    img.src = "img.png";
+
     roda();
 }
 
@@ -165,47 +188,44 @@ function roda() {
     window.requestAnimationFrame(roda); //gasta menos processamento
 }
 function atualiza() {
-    frames++;
-    bloco.atualiza();
+    background.atualiza();
     if (estadoAtual == estados.JOGANDO)
         obstaculos.atualiza();
+    bloco.atualiza();
 }
 function desenha() {
-    ctx.fillStyle = "#80daff";
-    ctx.fillRect(0,0,LARGURA,ALTURA);
+    //backgroud aparece primeiro, as letras por cima ...
+    background.desenha();
 
     ctx.fillStyle = "#fff";
     ctx.font = "50px Arial";
     ctx.fillText(bloco.score, 30, 30+38); //altura do digito sempre igual
 
 
-    if (estadoAtual ==estados.JOGAR) {
-        ctx.fillStyle = "green";
-        ctx.fillRect(LARGURA/2 -50, ALTURA/2-50, 100, 100);
+    if (estadoAtual==estados.JOGAR) {
+        play.desenha(LARGURA/2 - play.largura/2, ALTURA/2- play.altura/2);
     }
     else if (estadoAtual==estados.PERDEU) {
-        ctx.fillStyle = "red";
-        ctx.fillRect(LARGURA/2 -50, ALTURA/2-50, 100, 100);
-
         ctx.save();
-        ctx.translate(LARGURA/2, ALTURA/2); //muda a referencia de onde comeca a desenhar
-        ctx.fillStyle = "#fff";
-
-        //COLOCANDO O RECORD NO MEIO
-        if (bloco.score > record) //ainda nao mudou record em click():f
-            ctx.fillText("Novo Record!", -150, -65);
-        else if (record <10)
-            ctx.fillText("Record:" + record, -99, -65); //negativo em y vai para cima
-        else if (record<100)
-            ctx.fillText("Record:" + record, -112, -65);
-        else
-            ctx.fillText("Record:" + record, -125, -65); //-112-13(metade de um dígito) para ficar no centro
-        if (bloco.score<10)
-            ctx.fillText(bloco.score, -13, 12); //um digito tem 26x38 (largura/altura)
-        else if (bloco.score<100)
-            ctx.fillText(bloco.score, -13-13, 12);
-        else
-            ctx.fillText(bloco.score, -13*3, 12); //a fonte nao perece arial, y=12 ficou bom
+        ctx.translate(LARGURA/2, ALTURA/2); //economiza digitar LARGURA/2, ALTURA/2 ...
+        if (bloco.score>record) {
+            novo.desenha(-resultados.largura/2-30, -resultados.altura/2);
+            bonecoRasteira.desenha(-bonecoRasteira.largura/2,-bonecoRasteira.altura/2-110);
+            ctx.fillStyle = "#fff";
+            if (bloco.score <10)
+                ctx.fillText(bloco.score, -13, 34);
+            else if (bloco.score<100)
+                ctx.fillText(bloco.score, -13*2, 34);
+            else
+                ctx.fillText(bloco.score, -13*3, 34);
+        }
+        else { //nao é record
+            resultados.desenha(-resultados.largura/2-30,-resultados.altura/2);
+            bonecoCaiu.desenha(-bonecoCaiu.largura/2,-bonecoCaiu.altura/2-95);
+            ctx.fillStyle = "#fff";
+            ctx.fillText(bloco.score, 70, -26);
+            ctx.fillText(record, 70,32);
+        }
         ctx.restore();
     }
     else if (estadoAtual==estados.JOGANDO) {
