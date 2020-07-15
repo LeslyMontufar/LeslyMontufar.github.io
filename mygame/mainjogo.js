@@ -1,6 +1,31 @@
-var canvas, ctx, ALTURA, LARGURA, maxPulos=3, velocidade = 6,//vel em x
-estadoAtual,record,img,
+var canvas, ctx, ALTURA, LARGURA,  VELOCIDADE = 6, maxPulos=3,//vel em x
+estadoAtual,record,img, 
+faseAtual = 0,
 
+labelNovaFase = {
+    texto: "",
+    opacidade: 0.0,
+
+    fadeIn: function (dt) {
+        var fadeInId = setInterval(function () { //setInterval repete toda vez em 10*dt segundos
+            if (labelNovaFase.opacidade < 1.0)
+                labelNovaFase.opacidade += 0.01; //10ms
+            else {
+                clearInterval(fadeInId); // para parar de ficar repetindo usa clearInterval
+            }
+        }, 
+        10*dt); //para o fadeIn demorar 10ms *100=1s
+    },
+    fadeOut: function (dt) {
+        var fadeOutId = setInterval(function () {
+            if (labelNovaFase.opacidade > 0.0)
+                labelNovaFase.opacidade -= 0.01;
+            else 
+                clearInterval(fadeOutId);
+        }, 
+        10*dt);
+    }
+}
 estados = {
     JOGAR:0,
     JOGANDO:1,
@@ -24,7 +49,7 @@ background = {
 
     atualiza: function() {
         if (estadoAtual == estados.JOGANDO)
-            this.x -= velocidade/60;    
+            this.x -= VELOCIDADE/60;    
         if (this.x <LARGURA-bg.largura)
             this.x = 0;
     },
@@ -39,11 +64,14 @@ bloco = {
     altura: caracter.altura,
     largura: caracter.largura,
     gravidade: 1.5, //fixo
-    velocidade: 0, // velocidade do pulo!
+    velocidade: 0, // velocidade do pulo! (eixo y)
     forcaDoPulo: 24, //na verdade ele pula 15-1.5=13.5 px
     qntPulos: 0,
     score: 0, //para incializar é com ":"
     tempoMovimenta: 5,
+
+    vidas: 3,
+    colidindo: false,
 
     atualiza: function() {
         this.velocidade +=this.gravidade;
@@ -77,6 +105,9 @@ bloco = {
             record = this.score;
         }
         this.score = 0;
+        this.vidas = 3;
+        faseAtual = 0;
+        VELOCIDADE = 6;
     },
     desenha: function () {
         caracter.desenha(this.x, this.y);
@@ -92,7 +123,6 @@ obstaculos = {
         this._obs.push({ //adiciona obs
             x:LARGURA,
             largura: 50,
-            // largura: 30 + Math.floor(20*Math.random()),
             altura: 30 + Math.floor(120*Math.random()),
             cor: this._cores[Math.floor(5*Math.random())]
         });
@@ -108,17 +138,27 @@ obstaculos = {
 
         for (var i = 0; i<this._obs.length; i++) { 
             var obs = this._obs[i]; 
-            obs.x-=velocidade;
+            obs.x-=VELOCIDADE; // 600 é múltiplo de 6 entao chega em 0, mas se aumentar nao será mais
 
-            if (bloco.x<obs.x+obs.largura && bloco.x+bloco.largura>=obs.x && bloco.y+bloco.altura>=chao.y - obs.altura) { //antes de tirar o obstaculo da tela
-                estadoAtual = estados.PERDEU;
+            if (!bloco.colidindo && bloco.x<obs.x+obs.largura && bloco.x+bloco.largura>=obs.x && bloco.y+bloco.altura>=chao.y - obs.altura) { //antes de tirar o obstaculo da tela
+                bloco.colidindo = true;
+
+                setTimeout(function() {
+                    bloco.colidindo = false;
+                }, 500); //vai acontecer só depois de 500ms
+
+                if (bloco.vidas)
+                    bloco.vidas--;
+                else
+                    estadoAtual = estados.PERDEU;
             }
-            else if (obs.x==0){ //antes do bloco desaparecer ele sempre passa por x igual a 0, logo score++
+            else if (obs.x== !!(LARGURA%VELOCIDADE)*(LARGURA-Math.ceil(LARGURA/VELOCIDADE)*VELOCIDADE)){ //antes do bloco desaparecer ele sempre passa por x igual a 0, logo score++
                 bloco.score++;
+                if(bloco.score == Math.pow(2,faseAtual+2))
+                    passarDeFase();
             }
-            else if (obs.x <=-obs.largura) {
+            else if (obs.x <=-obs.largura)
                 this._obs.splice(i, 1); //tira uma posição a partir do i
-            }
         }
         
     },
@@ -132,11 +172,21 @@ obstaculos = {
             var obs = this._obs[i]; 
             ctx.fillStyle = obs.cor;
             ctx.fillRect(obs.x, chao.y-obs.altura, obs.largura, obs.altura);
-            // ctx.fillStyle = "black";
-            // ctx.strokeRect(obs.x, chao.y-obs.altura, obs.largura, obs.altura);
         }
     }
 }; 
+
+function passarDeFase() {
+    VELOCIDADE++;
+    faseAtual++;
+    if(bloco.vidas<3)
+        bloco.vidas++;
+    labelNovaFase.texto = "LEVEL " + faseAtual;
+    labelNovaFase.fadeIn(0.4); //400ms
+    setTimeout(function () { //setTimeOut ele deixa os outros rodando primeiro e só depois de 800ms roda o que esta dentro da função
+        labelNovaFase.fadeOut(0.4); //400ms
+    },800); //fica 400ms em 100% de opacidade  
+}
 
 function clique(event) {
     if (estadoAtual == estados.JOGANDO) {
@@ -196,11 +246,20 @@ function atualiza() {
 function desenha() {
     //backgroud aparece primeiro, as letras por cima ...
     background.desenha();
+    vidavazia.desenha(600-40-vidavazia.largura/2,30);
+    vidavazia.desenha(600-40-vidavazia.largura*3/2,30);
+    vidavazia.desenha(600-40-vidavazia.largura*5/2,30);
+    for (var n=0; n<bloco.vidas; n++){// 2n+1 e depois para ir ao contrario, faça n =>2-n
+        vidarosa.desenha(600-40-vidarosa.largura*(2*(2-n)+1)/2,30);
+    }
 
     ctx.fillStyle = "#fff";
     ctx.font = "50px Arial";
     ctx.fillText(bloco.score, 30, 30+38); //altura do digito sempre igual
-
+    
+    // Passar de Nivel -> desenhar
+    ctx.fillStyle = "rgba(255,255,255,"+labelNovaFase.opacidade+")";
+    ctx.fillText(labelNovaFase.texto, LARGURA/2-ctx.measureText(labelNovaFase.texto).width/2, ALTURA/3); // FICA UM POUCO MAIS PRA CIMA DO MEIO
 
     if (estadoAtual==estados.JOGAR) {
         play.desenha(LARGURA/2 - play.largura/2, ALTURA/2- play.altura/2);
