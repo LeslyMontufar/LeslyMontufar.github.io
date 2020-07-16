@@ -1,6 +1,18 @@
 var canvas, ctx, ALTURA, LARGURA,  VELOCIDADE = 6, maxPulos=3,//vel em x
 estadoAtual,record,img, 
-faseAtual = 0,
+faseAtual = 0, 
+
+sons = {
+    novaFase: new Audio("level.mp3"), //
+    novaVida: new Audio("novavida.wav"), //
+    perdeuVida: new Audio("perdeuvida.wav"), //
+    // inicio: new Audio("file.wav"),
+    perdeu: new Audio("perdeu.wav"),
+    record: new Audio("record.wav"), 
+    jogando: new Audio("jogando.wav"),
+    clique: new Audio("clique.wav"), //
+    colidiu: new Audio("colidiu.wav")
+},
 
 labelNovaFase = {
     texto: "",
@@ -130,7 +142,7 @@ obstaculos = {
         this.tempoInsere = 30 + Math.floor(30*Math.random());
     },
 
-    atualiza: function() {
+    atualiza: function() { //aqui vê se perdeu
         if (!this.tempoInsere)
             this.insere(); //cria outro tempo de inserir
         else
@@ -147,10 +159,15 @@ obstaculos = {
                     bloco.colidindo = false;
                 }, 500); //vai acontecer só depois de 500ms
 
-                if (bloco.vidas)
+                if (bloco.vidas){
+                    sons.colidiu.play();
+                    sons.perdeuVida.play();
                     bloco.vidas--;
-                else
+                }
+                else{
                     estadoAtual = estados.PERDEU;
+                    (bloco.score>record)? sons.record.play() : sons.perdeu.play();
+                }
             }
             else if (obs.x== !!(LARGURA%VELOCIDADE)*(LARGURA-Math.ceil(LARGURA/VELOCIDADE)*VELOCIDADE)){ //antes do bloco desaparecer ele sempre passa por x igual a 0, logo score++
                 bloco.score++;
@@ -179,8 +196,11 @@ obstaculos = {
 function passarDeFase() {
     VELOCIDADE++;
     faseAtual++;
-    if(bloco.vidas<3)
+    sons.novaFase.play();
+    if(bloco.vidas<3){
         bloco.vidas++;
+        sons.novaVida.play();
+    }    
     labelNovaFase.texto = "LEVEL " + faseAtual;
     labelNovaFase.fadeIn(0.4); //400ms
     setTimeout(function () { //setTimeOut ele deixa os outros rodando primeiro e só depois de 800ms roda o que esta dentro da função
@@ -189,7 +209,9 @@ function passarDeFase() {
 }
 
 function clique(event) {
+    sons.clique.play();
     if (estadoAtual == estados.JOGANDO) {
+        sons.jogando.play();
         bloco.pula();
     }
     else if (estadoAtual == estados.JOGAR) {
@@ -243,7 +265,7 @@ function atualiza() {
         obstaculos.atualiza();
     bloco.atualiza();
 }
-function desenha() {
+function desenha() { //nao pode tocar musica em desenha, porque essa f nao acontece so uma vez
     //backgroud aparece primeiro, as letras por cima ...
     background.desenha();
     vidavazia.desenha(600-40-vidavazia.largura/2,30);
