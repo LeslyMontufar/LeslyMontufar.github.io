@@ -3,15 +3,15 @@ estadoAtual,record,img,
 faseAtual = 0, 
 
 sons = {
-    novaFase: new Audio("level.mp3"), //
-    novaVida: new Audio("novavida.wav"), //
-    perdeuVida: new Audio("perdeuvida.wav"), //
-    // inicio: new Audio("file.wav"),
+    novaFase: new Audio("level.mp3"), 
+    novaVida: new Audio("novavida.wav"), 
+    perdeuVida: new Audio("perdeuVida.mp3"), 
+    // inicio: new Audio("file.wav"), //nao precisa
     perdeu: new Audio("perdeu.wav"),
     record: new Audio("record.wav"), 
     jogando: new Audio("jogando.wav"),
-    clique: new Audio("clique.wav"), //
-    colidiu: new Audio("colidiu.wav")
+    clique: new Audio("clique.wav")
+    // colidiu: new Audio("colidiu.wav")
 },
 
 labelNovaFase = {
@@ -160,7 +160,6 @@ obstaculos = {
                 }, 500); //vai acontecer só depois de 500ms
 
                 if (bloco.vidas){
-                    sons.colidiu.play();
                     sons.perdeuVida.play();
                     bloco.vidas--;
                 }
