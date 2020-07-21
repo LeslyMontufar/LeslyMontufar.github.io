@@ -5,7 +5,7 @@ faseAtual = 0,
 sons = {
     novaFase: new Audio("level.mp3"), 
     novaVida: new Audio("novavida.wav"), 
-    perdeuVida: new Audio("perdeuVida.mp3"), 
+    perdeuVida: new Audio("perdeuvida.mp3"), 
     // inicio: new Audio("file.wav"), //nao precisa
     perdeu: new Audio("perdeu.wav"),
     record: new Audio("record.wav"), 
@@ -166,6 +166,10 @@ obstaculos = {
                 else{
                     estadoAtual = estados.PERDEU;
                     (bloco.score>record)? sons.record.play() : sons.perdeu.play();
+                    document.removeEventListener("mousedown", clique);
+                    setTimeout(function () {
+                        document.addEventListener("mousedown", clique);
+                    }, 1000); 
                 }
             }
             else if (obs.x== !!(LARGURA%VELOCIDADE)*(LARGURA-Math.ceil(LARGURA/VELOCIDADE)*VELOCIDADE)){ //antes do bloco desaparecer ele sempre passa por x igual a 0, logo score++
@@ -210,16 +214,17 @@ function passarDeFase() {
 function clique(event) {
     sons.clique.play();
     if (estadoAtual == estados.JOGANDO) {
-        sons.jogando.play();
         bloco.pula();
     }
     else if (estadoAtual == estados.JOGAR) {
         estadoAtual = estados.JOGANDO;
+        sons.jogando.play(); //acontece só no inicio do jogo
     }
     else if (estadoAtual == estados.PERDEU && bloco.y >2*bloco.altura){
-        estadoAtual = estados.JOGAR;
+        estadoAtual = estados.JOGAR;  
         obstaculos.limpa();
         bloco.reset();
+        sons.jogando.pause(); 
     }
 }
 function main() {
@@ -241,6 +246,7 @@ function main() {
     // keydown, keyup, keypress
 
     estadoAtual = estados.JOGAR;
+    sons.jogando.loop = true;
 
     record = localStorage.getItem("record"); //se encontrar usa, else record=null
     if (record==null)
