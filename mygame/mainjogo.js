@@ -5,7 +5,12 @@ faseAtual = 0,
 sons = {
     novaFase: new Audio("level.mp3"), 
     novaVida: new Audio("novavida.wav"), 
+<<<<<<< HEAD
     perdeuVida: new Audio("perdeuvida.wav"),
+=======
+    perdeuVida: new Audio("perdeuvida.mp3"), 
+    // inicio: new Audio("file.wav"), //nao precisa
+>>>>>>> 57368e3a7012fb066a5ef5c19a13ce55b777f576
     perdeu: new Audio("perdeu.wav"),
     record: new Audio("record.wav"), 
     jogando: new Audio("jogando.wav"),
@@ -167,10 +172,14 @@ obstaculos = {
                     document.removeEventListener("mousedown", clique);
                     setTimeout(function () {
                         document.addEventListener("mousedown", clique);
+<<<<<<< HEAD
                     }, 1000);
                     setTimeout(function () {
                         sons.jogando.pause();
                     }, (sons.jogando.duration-sons.jogando.currentTime)*1000);        
+=======
+                    }, 1000); 
+>>>>>>> 57368e3a7012fb066a5ef5c19a13ce55b777f576
                 }
             }
             else if (obs.x== !!(LARGURA%VELOCIDADE)*(LARGURA-Math.ceil(LARGURA/VELOCIDADE)*VELOCIDADE)){ //antes do bloco desaparecer ele sempre passa por x igual a 0, logo score++
@@ -226,6 +235,7 @@ function clique(event) {
         estadoAtual = estados.JOGAR;  
         obstaculos.limpa();
         bloco.reset();
+        sons.jogando.pause(); 
     }
 }
 function main() {
