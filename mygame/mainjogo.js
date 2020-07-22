@@ -218,6 +218,7 @@ function clique(event) {
     }
     else if (estadoAtual == estados.JOGAR) {
         estadoAtual = estados.JOGANDO;
+        sons.jogando.currentTime = 0;
         sons.jogando.play(); //acontece só no inicio do jogo
     }
     else if (estadoAtual == estados.PERDEU && bloco.y >2*bloco.altura){
