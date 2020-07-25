@@ -28,17 +28,17 @@ setInterval(function ( ) {
 var xhttp = new XMLHttpRequest();
 xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) { //200 é o OK
-    var x = (new Date()).getTime() - (3*60*60*1000), // fuso Brasil
-        y = parseFloat(this.responseText); //faz o cast para float do texto que .ino mandou pelo .send_P()
-    console.log(this.responseText);
-    if(chartT.series[0].data.length > 40) {
+      var x = (new Date()).getTime() - (3*60*60*1000), // fuso Brasil
+          y = parseFloat(this.responseText); 
+      document.getElementById("temperature").innerHTML = this.responseText;
+      if(chartT.series[0].data.length > 40) {
         chartT.series[0].addPoint([x, y], true, true, true);
-    } else {
+      } else {
         chartT.series[0].addPoint([x, y], true, false, true);
-    }
+      }
     }
 };
-xhttp.open("GET", "/temperature", true); //aqui abre index.html
+xhttp.open("GET", "/temperature", true); //no /temperature que está a info que precisamos
 xhttp.send();
 }, 30000 ) ;
 
@@ -47,17 +47,38 @@ xhttp.send();
  * MOSTRANDO SE O AQUECIMENTO ESTÁ LIGADO
  */
 
-var button, canvas, ctx, canvas;
+// var button, c, ctx;
+// button = document.getElementById("toggleButton");
+// c = document.getElementById("led");
+// ctx = c.getContext("2d");
+// ctx.arc(25,25,15,0,2*Math.PI, false);
+// ctx.lineWidth = 3;
+// ctx.strokeStyle = "black";
+// ctx.stroke();
+// ctx.fillStyle = "black";
+// ctx.fill();
 
-//assigna os elementos da pagina à variáveis
-button = document.getElementById("toggleButton");
-canvas = document.getElementById("led");
-
-//desenha circulo no canvas
-ctx = canvas.getContext("2d");
-ctx.arc(25,25,15,0,2*Math.PI, false); //um arco de 2pi é um circulo
-ctx.lineWidth = 3;
-ctx.strokeStyle = "black";
-ctx.stroke();
-ctx.fillStyle = "black";
-ctx.fill();
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) { 
+      document.getElementById("aquecimento").innerHTML = this.responseText;
+      // switch(this.responseText) {
+      //   case "0":
+      //     console.log("LED desligado");
+      //     ctx.fillStyle = "black";
+      //     ctx.fill();
+      //     break;
+      //   case "1":
+      //     console.log("LED ligado");
+      //     ctx.fillStyle = "#fffa65";
+      //     ctx.fill();
+      //     break;
+      //   default:
+      //     break;
+      // }
+    }
+  };
+  xhttp.open("GET", "/aquecimento", true); 
+  xhttp.send();
+}, 30000 ) ;

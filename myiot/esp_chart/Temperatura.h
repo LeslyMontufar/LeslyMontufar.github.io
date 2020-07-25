@@ -19,22 +19,6 @@
   }
  }
 
-String ledState;
-String state(const String& var){
-  Serial.println(var);
-  if(var == "STATE"){
-    if(digitalRead(LED_BUILTIN)){
-      ledState = "ON";
-    }
-    else{
-      ledState = "OFF";
-    }
-    Serial.print(ledState);
-    return ledState;
-  }
-  return String();
-}
-
 /*****************************************************
  * LEITURA DA TEMPERATURA
  */

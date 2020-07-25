@@ -24,3 +24,12 @@ h2 {
   .button2 {
     background-color: #f44336;
   }
+
+  .units {
+    font-size: 1.2rem;
+   }
+  .sensor-labels {
+    font-size: 1.5rem;
+    vertical-align:middle;
+    padding-bottom: 15px;
+  }

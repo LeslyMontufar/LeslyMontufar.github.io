@@ -1,3 +1,4 @@
+#include <ESPmDNS.h>
 #include <WiFi.h>
 #include <ESPAsyncWebServer.h>
 #include <SPIFFS.h>
@@ -22,7 +23,8 @@ DeviceAddress sensor1;
 /*****************************************************
  * SETUP
  */
- 
+
+String processor(const String& var);
 void setup(){
   // Serial port for debugging purposes
   Serial.begin(115200);
@@ -45,16 +47,21 @@ void setup(){
     delay(300);
     Serial.print(".");
   }
+  // Assign a name to IP address
+  if(!MDNS.begin("esp32")) {
+    Serial.println("Erro ao iniciar mDNS");
+    return;
+  }
 
   // Print ESP32 Local IP Address
   Serial.println();
   Serial.print("Meu endereço IP: ");
   Serial.println(WiFi.localIP());
 
-  // Route for root / web page
+  // Anexando html com SPIFFS
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/index.html"); // manda requerimento para o servidor
-  });
+    request->send(SPIFFS, "/index.html", String(), false, processor);
+  }); //The last argument of the send() function is the processor, so that we can replace the placeholder with the value we want,in this case the ledState.
   server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/style.css", "text/css");
   });
@@ -62,18 +69,12 @@ void setup(){
     request->send(SPIFFS, "/temperatura.js", "text/javascript");
   });
 
-  // tags para comunicacao
+  // Routes: tags para comunicacao
   server.on("/temperature", HTTP_GET, [](AsyncWebServerRequest *request){ //HTTP_GET indica que existe comunicacao
     request->send_P(200, "text/plain", readDS18B20Temperature(sensors, sensor1).c_str());
   });
-  // routes
-  server.on("/on", HTTP_GET, [](AsyncWebServerRequest *request){
-    digitalWrite(LED_BUILTIN, HIGH);
-    request->send(SPIFFS, "/index.html", String(),false, state);
-  });
-  server.on("/off", HTTP_GET, [](AsyncWebServerRequest *request){
-    digitalWrite(LED_BUILTIN, LOW);
-    request->send(SPIFFS, "/index.html", String(),false, state);
+  server.on("/aquecimento", HTTP_GET, [](AsyncWebServerRequest *request){ 
+    request->send_P(200, "text/plain", String(digitalRead(LED_BUILTIN)).c_str());
   });
 
   // Start server
@@ -82,4 +83,26 @@ void setup(){
  
 void loop(){
   
+}
+
+String ledState,t;
+String processor(const String& var){ //só altera com atualizacao da pagina
+  Serial.println(String(digitalRead(LED_BUILTIN)));
+  Serial.print(var);
+  Serial.print(": ");
+  if(var == "AQUECIMENTO"){
+    if(digitalRead(LED_BUILTIN)){
+      ledState = "ON";
+    }
+    else{
+      ledState = "OFF";
+    }
+    Serial.println(ledState);
+    return ledState;
+  }
+  else if (var == "TEMPERATURE"){
+    t = readDS18B20Temperature(sensors, sensor1);
+    Serial.println(t);
+    return t;
+  }
 }
