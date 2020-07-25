@@ -1,3 +1,7 @@
+/************************************************************
+ * MOSTRANDO A TEMPERATURA EM TEMPO REAL
+ */
+
 var chartT = new Highcharts.Chart({
   chart:{ renderTo : 'chart-temperature' }, //id
   title: { text: 'Temperatura' },
@@ -34,6 +38,26 @@ xhttp.onreadystatechange = function() {
     }
     }
 };
-xhttp.open("GET", "/temperature", true); //aqui requere os dados do ESP32
+xhttp.open("GET", "/temperature", true); //aqui abre index.html
 xhttp.send();
 }, 30000 ) ;
+
+
+/************************************************************
+ * MOSTRANDO SE O AQUECIMENTO ESTÁ LIGADO
+ */
+
+var button, canvas, ctx, canvas;
+
+//assigna os elementos da pagina à variáveis
+button = document.getElementById("toggleButton");
+canvas = document.getElementById("led");
+
+//desenha circulo no canvas
+ctx = canvas.getContext("2d");
+ctx.arc(25,25,15,0,2*Math.PI, false); //um arco de 2pi é um circulo
+ctx.lineWidth = 3;
+ctx.strokeStyle = "black";
+ctx.stroke();
+ctx.fillStyle = "black";
+ctx.fill();

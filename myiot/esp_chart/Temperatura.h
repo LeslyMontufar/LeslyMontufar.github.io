@@ -19,6 +19,22 @@
   }
  }
 
+String ledState;
+String state(const String& var){
+  Serial.println(var);
+  if(var == "STATE"){
+    if(digitalRead(LED_BUILTIN)){
+      ledState = "ON";
+    }
+    else{
+      ledState = "OFF";
+    }
+    Serial.print(ledState);
+    return ledState;
+  }
+  return String();
+}
+
 /*****************************************************
  * LEITURA DA TEMPERATURA
  */
@@ -33,7 +49,7 @@ void mostra_endereco_sensor(DeviceAddress deviceAddress) {
   }
 }
 void verifica_contato_sensor_DS18B20(DallasTemperature sensors, DeviceAddress sensor1) {
-  Serial.println("***********************************************");
+  Serial.println("\n***********************************************");
   Serial.println("Localizado sensores DS18B20...");
   Serial.print("Foram encontrados ");
   Serial.print(sensors.getDeviceCount(), DEC); //DallasTemperature

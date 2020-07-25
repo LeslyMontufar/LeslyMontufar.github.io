@@ -61,16 +61,19 @@ void setup(){
   server.on("/temperatura.js", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/temperatura.js", "text/javascript");
   });
-  server.on("/aquecer.js", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/aquecer.js", "text/javascript");
-  });
 
   // tags para comunicacao
   server.on("/temperature", HTTP_GET, [](AsyncWebServerRequest *request){ //HTTP_GET indica que existe comunicacao
     request->send_P(200, "text/plain", readDS18B20Temperature(sensors, sensor1).c_str());
   });
-  server.on("/aquecer", HTTP_GET, [](AsyncWebServerRequest *request){ //HTTP_GET indica que existe comunicacao
-    request->send_P(200, "text/plain", aquecer().c_str());
+  // routes
+  server.on("/on", HTTP_GET, [](AsyncWebServerRequest *request){
+    digitalWrite(LED_BUILTIN, HIGH);
+    request->send(SPIFFS, "/index.html", String(),false, state);
+  });
+  server.on("/off", HTTP_GET, [](AsyncWebServerRequest *request){
+    digitalWrite(LED_BUILTIN, LOW);
+    request->send(SPIFFS, "/index.html", String(),false, state);
   });
 
   // Start server
