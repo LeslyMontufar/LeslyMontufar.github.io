@@ -2,8 +2,8 @@
  * AQUECIMENTO DO AQUARIO
  */
 
- float TEMP_IDEAL_MIN = 25.9; // 21
- float TEMP_IDEAL_MAX = 26.5; // 25
+ float TEMP_IDEAL_MIN = 26.5; // 21
+ float TEMP_IDEAL_MAX = 27; // 25
  float DT = TEMP_IDEAL_MAX - TEMP_IDEAL_MIN;
  #define LED_BUILTIN 2 // PINO DO LED PARA TESTE
 
