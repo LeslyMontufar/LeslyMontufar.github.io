@@ -1,7 +1,7 @@
 title: leslymontufar
 subtitle: Site para que eu possa aprender mais!
 description: >- # this means to ignore newlines until "baseurl:" ok
-    Aprendendo o que puder ... (nao aparece)
+    Aprendendo o que puder ... 
 
 url: "" # the base hostname & protocol for your site, e.g. https://example.github.io
 baseurl: "" # the subpath of your site, e.g. /blog
@@ -13,6 +13,8 @@ urls:
       url: /blog
     - text: Game
       url: /mygame
+    - text: PID
+      url: /myanimation
       
     # - text: Galeria
     #   url: /gallery
