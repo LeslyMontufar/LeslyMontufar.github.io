@@ -6,11 +6,12 @@
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 
 I'm using this theme which credits are for MIT.
+
 devlopr uses Markdown Files to create data like Blog Posts, Gallery, Shop Products etc. No external database is required.
 
 
 ### You can find a game
 
 ![A Game](https://github.com/LeslyMontufar/LeslyMontufar.github.io/blob/master/assets/img/screenshot.PNG?raw=true)
-I learned this here https://www.youtube.com/watch?v=z3r8up9cz3w&list=RDCMUCv6aZVQz8IHrhgemxZrNRmQ&start_radio=1&t=6
 
+I learned this here https://www.youtube.com/watch?v=z3r8up9cz3w&list=RDCMUCv6aZVQz8IHrhgemxZrNRmQ&start_radio=1&t=6
