@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Welcome to devlopr !"
-summary: Esse template é incrível, recomeno muito o jekyll!
+summary: . . .
 author: John Doe
 date: '2019-05-22 14:35:23 +0530'
 category: jekyll
