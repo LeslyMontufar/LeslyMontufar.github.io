@@ -19,7 +19,7 @@ I learned this here https://www.youtube.com/watch?v=z3r8up9cz3w&list=RDCMUCv6aZV
 
 ### how to make changes in code 
 
-![Jekyyl command to run the web app](https://github.com/LeslyMontufar/LeslyMontufar.github.io/blob/master/assets/img/jekyllcommand.PNG?raw=true)
+![Jekyll command to run the web app](https://github.com/LeslyMontufar/LeslyMontufar.github.io/blob/master/assets/img/jekyllcommand.PNG?raw=true)
 
 Comando para gerar o servidor do jekyll
 
