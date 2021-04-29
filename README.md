@@ -15,3 +15,16 @@ devlopr uses Markdown Files to create data like Blog Posts, Gallery, Shop Produc
 ![A Game](https://github.com/LeslyMontufar/LeslyMontufar.github.io/blob/master/assets/img/screenshot.PNG?raw=true)
 
 I learned this here https://www.youtube.com/watch?v=z3r8up9cz3w&list=RDCMUCv6aZVQz8IHrhgemxZrNRmQ&start_radio=1&t=6
+
+
+### how to make changes in code 
+
+![Jekyyl comand to run the web](https://github.com/LeslyMontufar/LeslyMontufar.github.io/blob/master/assets/img/jekyllcomand.PNG?raw=true)
+
+Comando para gerar o servidor do jekyll
+
+Acrescentar no final --incremental, para modificar tbm em _site ou _bundle
+
+bundle exec jekyll serve --incremental
+
+
